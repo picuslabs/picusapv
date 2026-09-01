@@ -1,69 +1,132 @@
 # SharpHound
-C# Data Collector for the BloodHound Project.
 
-### General Information
-| Project Source | Our Version | DotNet Version |
-|:-:|:-:|:-:|
-| https://github.com/BloodHoundAD/SharpHound | 1.0.6 | 4.6.2 |
+![GitHub all releases](https://img.shields.io/github/downloads/SpecterOps/SharpHound/total)
 
-### Edit & Update Instructions
-For updates to the new version, the following changes must be made in the new version.
-* Merged LoggedOn and trackcomputer parameters
-    * File Name: Options.cs
-    * Line: 181
-    * ```TrackComputerCalls = true```
-* Randomize file names inside SharpHound Collection ZIP
-    * File Name: JsonDataWriter.cs
-    * Line: 40
-    * ```protected override void CreateFile() function change```
-* Randomize file names inside SharpHound Collection ZIP
-    * File Name: ResolveFileNamessss.cs
-    * Line: 100
-    * ```public string ResolveFileName(string filename, string extension, bool addTimestamp) function change```	
-* Remove BloodHound keyword from ZIP filename
-    * File Name: OutputWriter.cs
-    * Line: 145
-    * ```var filename = string.IsNullOrEmpty(_context.ZipFilename) ? "Enum" : _context.ZipFilename;```
-* Change ZIP extension to bin
-    * File Name: BaseContext.cs
-    * Line: 105
-    * ```if (extension is "json" or "zip" or "bin" && Flags.RandomizeFilenames)```
-* Getting the ZIP Filename
-    * File Name: OutputWriter.cs
-    * Line: 187
-    * ```_context.Logger.LogInformation("PARSE_ZIP_FILE:{finalPath}", resolvedFileName);```
-* Getting the CACHE Filename
-    * File Name: Sharphound.cs
-    * Line: 179
-    * ```context.Logger.LogInformation("PARSE_CACHE_FILE:{Path}", path);```
-* Remove application icon from Project Properties.
+## Get SharpHound
 
-### Compile & Debug Instructions
-* SharpHound uses multiple third party libraries, so Nuget needs to be set up on MSVC first. For this, the steps in the link should be followed: https://docs.microsoft.com/en-us/nuget/api/overview#service-index
-* It works successfully in Debug mode. No extra settings are needed for debugging. In addition, the output can be detailed with the Verbose (v) parameter. The verbose mode default value is 2 and lower is means more verbose.
+The latest build of SharpHound will always be found [here](https://github.com/SpecterOps/SharpHound/releases).
 
-### Execution Notes
-* If no parameter/value is given for output files in any way; `PARSE_ZIP_FILE` and `CACHE_ZIP_FILE` parameters will start with `.\` in the output. Therefore, the `--outputdirectory` parameter should be used and given an appropriate value.
+To determine the SharpHound version compatible with a deployed BloodHound CE instance, login to BloodHound CE's web UI and click on ⚙️ (Settings) → Download Collectors. Then, click either the "Download SharpHound" button in the user interface or use the displayed SharpHound version to download the appropriate [release binary](https://github.com/SpecterOps/SharpHound/releases). Alternatively, compile a SharpHound binary from the corresponding release commit.
 
-### Sample Output
+## Documentation
+
+Please refer to the [SharpHound section](https://bloodhound.specterops.io/collect-data/ce-collection/sharphound), part of the [BloodHound Community Edition documentation](https://bloodhound.specterops.io/home). 
+
+## Compile Instructions
+
+To build this project, use .net 5.0 and run the following:
+
 ```
-$ SharpHound.exe --outputdirectory C:\Users\Public\
+dotnet restore .
+dotnet build
+```
 
-2022-06-27T11:14:34.2569538-07:00|INFORMATION|Resolved Collection Methods: Group, LocalAdmin, Session, Trusts, ACL, Container, RDP, ObjectProps, DCOM, SPNTargets, PSRemote
-2022-06-27T11:14:34.2629562-07:00|INFORMATION|Initializing SharpHound at 11:14 AM on 6/27/2022
-2022-06-27T11:14:34.4599563-07:00|INFORMATION|PARSE_CACHE_FILE:C:\Users\Public\MzRlYWUyYjktYWNkNS00ODM0LTllNTgtN2IzZjcwZWQwYzIy.bin
-2022-06-27T11:14:34.4889578-07:00|INFORMATION|Flags: Group, LocalAdmin, Session, Trusts, ACL, Container, RDP, ObjectProps, DCOM, SPNTargets, PSRemote
-2022-06-27T11:14:34.7069587-07:00|INFORMATION|Beginning LDAP search for 
-2022-06-27T11:14:34.7409580-07:00|INFORMATION|Producer has finished, closing LDAP channel
-2022-06-27T11:14:34.7429536-07:00|INFORMATION|LDAP channel closed, waiting for consumers
-2022-06-27T11:15:04.8144875-07:00|INFORMATION|Status: 0 objects finished (+0 0)/s -- Using 35 MB RAM
-2022-06-27T11:15:34.8104892-07:00|INFORMATION|Status: 119 objects finished (+119 1.983333)/s -- Using 42 MB RAM
-2022-06-27T11:15:36.6025274-07:00|INFORMATION|Consumers finished, closing output channel
-2022-06-27T11:15:36.6444886-07:00|INFORMATION|Output channel closed, waiting for output task to complete
-Closing writers
-2022-06-27T11:15:36.8124803-07:00|INFORMATION|Status: 132 objects finished (+13 2.129032)/s -- Using 40 MB RAM
-2022-06-27T11:15:36.8124803-07:00|INFORMATION|Enumeration finished in 00:01:02.1101889
-2022-06-27T11:15:36.9274830-07:00|INFORMATION|PARSE_ZIP_FILE:C:\Users\Public\20220627111515_Enum.bin
-2022-06-27T11:15:36.9724854-07:00|INFORMATION|SharpHound Enumeration Completed at 11:15 AM on 6/27/2022! Happy Graphing!
+## Requirements
 
+SharpHound is designed targeting .Net 4.6.2. SharpHound must be run from the context of a domain user, either directly through a logon or through another method such as RUNAS.
+
+# SharpHound
+
+```csharp
+dotnet restore .
+dotnet build
+```
+
+# CLI Arguments
+The listing below details the CLI arguments SharpHound supports. Additional details about these options can be found in the [BloodHound CE Collection documentation](https://bloodhound.specterops.io/collect-data/ce-collection/sharphound-flags).
+```
+  -c, --collectionmethods    (Default: Default) Collection Methods: Container, Group, LocalGroup, GPOLocalGroup,
+                             Session, LoggedOn, ObjectProps, ACL, ComputerOnly, Trusts, Default, RDP, DCOM, DCOnly, UserRights, 
+                             CARegistry, DCRegistry, CertServices, WebClientService, NTLMRegistry,SMBInfo,LdapServices
+
+  -d, --domain               Specify domain to enumerate
+
+  -s, --searchforest         (Default: false) Search all available domains in the forest
+
+  --stealth                  Stealth Collection (Prefer DCOnly whenever possible!)
+
+  -f                         Add an LDAP filter to the pregenerated filter.
+
+  --distinguishedname        Base DistinguishedName to start the LDAP search at
+
+  --computerfile             Path to file containing computer names to enumerate
+
+  --outputdirectory          (Default: .) Directory to output file too
+
+  --outputprefix             String to prepend to output file names
+
+  --cachename                Filename for cache (Defaults to a machine specific identifier)
+
+  --memcache                 Keep cache in memory and don't write to disk
+
+  --rebuildcache             (Default: false) Rebuild cache and remove all entries
+
+  --randomfilenames          (Default: false) Use random filenames for output
+
+  --zipfilename              Filename for the zip
+
+  --nozip                    (Default: false) Don't zip files
+
+  --trackcomputercalls       (Default: false) Adds a CSV tracking requests to computers
+
+  --zippassword              Password protects the zip with the specified password
+
+  --prettyprint              (Default: false) Pretty print JSON
+
+  --ldapusername             Username for LDAP
+
+  --ldappassword             Password for LDAP
+
+  --domaincontroller         Override domain controller to pull LDAP from. This option can result in data loss
+
+  --ldapport                 (Default: 0) Override port for LDAP
+
+  --secureldap               (Default: false) Connect to LDAP SSL instead of regular LDAP
+
+  --disablecertverification  (Default: false) Disable certificate verification for secure LDAP
+
+  --disablesigning           (Default: false) Disables Kerberos Signing/Sealing
+
+  --skipportcheck            (Default: false) Skip checking if 445 is open
+
+  --portchecktimeout         (Default: 500) Timeout for port checks in milliseconds
+
+  --skippasswordcheck        (Default: false) Skip PwdLastSet age check when checking computers
+
+  --excludedcs               (Default: false) Exclude domain controllers from session/localgroup enumeration (mostly for
+                             ATA/ATP)
+
+  --throttle                 Add a delay after computer requests in milliseconds
+
+  --jitter                   Add jitter to throttle (percent)
+
+  --threads                  (Default: 50) Number of threads to run enumeration with
+
+  --skipregistryloggedon     Skip registry session enumeration
+
+  --overrideusername         Override the username to filter for NetSessionEnum
+
+  --realdnsname              Override DNS suffix for API calls
+
+  --collectallproperties     Collect all LDAP properties from objects
+
+  -l, --Loop                 Loop computer collection
+
+  --loopduration             Loop duration (hh:mm:ss - 05:00:00 is 5 hours, default: 2 hrs)
+
+  --loopinterval             Add delay between loops (hh:mm:ss - 00:03:00 is 3 minute)
+
+  --statusinterval           (Default: 30000) Interval in which to display status in milliseconds
+
+  --localadminsessionenum    Specify if you want to use a dedicated LOCAL user for session enumeration
+
+  --localadminusername       Specify the username of the localadmin for session enumeration
+
+  --localadminpassword       Specify the password of the localadmin for session enumeration
+
+  -v                         (Default: 2) Enable verbose output. Lower is more verbose
+
+  --help                     Display this help screen.
+
+  --version                  Display version information.
 ```
