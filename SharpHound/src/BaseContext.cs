@@ -117,7 +117,7 @@ namespace Sharphound
 
             }
 
-            // if (addTimestamp) finalFilename = $"{CurrentLoopTime}_{finalFilename}";
+            //if (addTimestamp) finalFilename = $"{CurrentLoopTime}_{finalFilename}";
 
             if (OutputPrefix != null) finalFilename = $"{OutputPrefix}_{finalFilename}";
 
